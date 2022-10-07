@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 
 	"github.com/wonderivan/logger"
@@ -14,7 +15,7 @@ import (
  * @author 王子龙
  * 时间：2022/9/27 13:25
  */
-var Service deployment
+var Service service
 
 type service struct{}
 
@@ -27,7 +28,7 @@ type ServicesResp struct {
 //定义DeploysNp类型，用于返回namespace中deployment的数量
 type ServicesNp struct {
 	Namespace  string `json:"namespace"`
-	ServiceNum int    `json:"Service_num"`
+	ServiceNum int    `json:"service_num"`
 }
 
 func (s *service) toCells(std []corev1.Service) []DataCell {
@@ -54,6 +55,46 @@ type ServiceCreate struct {
 	Port          int32             `json:"port"`
 	NodePort      int32             `json:"node_port"`
 	Label         map[string]string `json:"label"`
+}
+
+//获取service列表，支持过滤、排序、分页
+func (s *service) GetServices(filterName, namespace string, limit, page int) (servicesResp *ServicesResp, err error) {
+	//获取serviceList类型的service列表
+	serviceList, err := K8s.ClientSet.CoreV1().Services(namespace).List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		logger.Error(errors.New("获取Service列表失败," + err.Error()))
+		return nil, errors.New("获取Service列表失败，" + err.Error())
+	}
+	//将serviceList中的service列表（Item），放进dataselector对象中，进行排序
+	selectableData := &dataSelector{
+		GenericDataList: s.toCells(serviceList.Items),
+		dataSelectQuery: &DataSelectQuery{
+			FilterQuery: &FilterQuery{Name: filterName},
+			PaginateQuery: &PaginateQuery{
+				Limit: limit,
+				Page:  page,
+			},
+		},
+	}
+	filtered := selectableData.Filter()
+	total := len(filtered.GenericDataList)
+	data := filtered.Sort().Paginate()
+	//将[]DataCell类型的service列表转为v1.service列表
+	services := s.fromCells(data.GenericDataList)
+	return &ServicesResp{
+		Items: services,
+		Total: total,
+	}, nil
+}
+
+//获取service详情
+func (s *service) GetServiceDetail(serviceName, namespace string) (service *corev1.Service, err error) {
+	service, err = K8s.ClientSet.CoreV1().Services(namespace).Get(context.TODO(), serviceName, metav1.GetOptions{})
+	if err != nil {
+		logger.Error(errors.New("获取Service详情失败，" + err.Error()))
+		return nil, errors.New("获取Service详情失败，" + err.Error())
+	}
+	return service, nil
 }
 
 //创建service，接收ServiceCreate对象
@@ -92,6 +133,32 @@ func (s *service) CreateService(data *ServiceCreate) (err error) {
 	if err != nil {
 		logger.Error(errors.New("创建Service失败，" + err.Error()))
 		return errors.New("创建Service失败，" + err.Error())
+	}
+	return nil
+}
+
+//删除service
+func (s *service) DeleteService(serviceName, namespace string) (err error) {
+	err = K8s.ClientSet.CoreV1().Services(namespace).Delete(context.TODO(), serviceName, metav1.DeleteOptions{})
+	if err != nil {
+		logger.Error(errors.New("删除Service失败，" + err.Error()))
+		return errors.New("删除Service失败，" + err.Error())
+	}
+	return nil
+}
+
+//更新service
+func (s *service) UpdateService(namespace, content string) (err error) {
+	var service = &corev1.Service{}
+	err = json.Unmarshal([]byte(content), service)
+	if err != nil {
+		logger.Error(errors.New("反序列化失败，" + err.Error()))
+		return errors.New("反序列化失败," + err.Error())
+	}
+	_, err = K8s.ClientSet.CoreV1().Services(namespace).Update(context.TODO(), service, metav1.UpdateOptions{})
+	if err != nil {
+		logger.Error(errors.New("更新service失败，" + err.Error()))
+		return errors.New("更新service失败，" + err.Error())
 	}
 	return nil
 }
