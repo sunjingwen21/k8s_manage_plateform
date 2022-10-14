@@ -235,7 +235,7 @@ func (d *deployment) DeleteDeployment(deploymentName, namespace string) (err err
 }
 
 //重启deployment
-func (d *deployment) RestartDeployment(deploymentName, namespace string) (err error) {
+func (d *deployment) RestartDeployment(deploymentName, imageName, namespace string) (err error) {
 	//此功能等同于以下kubectl命令
 	//kubectl deployment ${service} -p \
 	//'{"spec":{"template":{"spec":{"containers":[{"name":"'"${service}"'","env":
@@ -243,11 +243,16 @@ func (d *deployment) RestartDeployment(deploymentName, namespace string) (err er
 
 	//使用patchData Map组装数据
 	patchData := map[string]interface{}{
+		"metadata": map[string]interface{}{
+			"name":      deploymentName,
+			"namespace": namespace,
+		},
 		"spec": map[string]interface{}{
 			"template": map[string]interface{}{
 				"spec": map[string]interface{}{
 					"containers": []map[string]interface{}{
-						{"name": deploymentName,
+						{"name": imageName,
+							"image": imageName,
 							"env": []map[string]string{{
 								"name":  "RESTART_",
 								"value": strconv.FormatInt(time.Now().Unix(), 10),

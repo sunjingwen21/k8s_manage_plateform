@@ -164,6 +164,7 @@ func (d *deployment) DeleteDeployment(ctx *gin.Context) {
 func (d *deployment) RestartDeployment(ctx *gin.Context) {
 	params := new(struct {
 		DeploymentName string `json:"deployment_name"`
+		ImageName      string `json:"image_name"`
 		Namespace      string `json:"namespace"`
 	})
 	//PUT请求，绑定参数方法为ctx.ShouldBindJSON
@@ -175,7 +176,7 @@ func (d *deployment) RestartDeployment(ctx *gin.Context) {
 		})
 		return
 	}
-	err := service.Deployment.RestartDeployment(params.DeploymentName, params.Namespace)
+	err := service.Deployment.RestartDeployment(params.DeploymentName, params.ImageName, params.Namespace)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"msg":  err.Error(),
