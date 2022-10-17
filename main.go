@@ -39,5 +39,4 @@ func main() {
 
 	//http server gin程序启动
 	r.Run(config.ListenAddr)
-
 }

@@ -81,6 +81,7 @@ func (d *deployment) CreateDeployment(ctx *gin.Context) {
 		deployCreate = new(service.DeployCreate)
 		err          error
 	)
+	fmt.Println("bbb")
 	if err = ctx.ShouldBindJSON(deployCreate); err != nil {
 		logger.Error("Bind请求参数失败，" + err.Error())
 		ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -89,6 +90,7 @@ func (d *deployment) CreateDeployment(ctx *gin.Context) {
 		})
 		return
 	}
+	fmt.Println(deployCreate)
 	if err = service.Deployment.CreateDeployment(deployCreate); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"msg":  err.Error(),
