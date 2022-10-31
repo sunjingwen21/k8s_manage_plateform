@@ -48,7 +48,7 @@ func (n *namespace) GetNamespaces(ctx *gin.Context) {
 //获取namespace详情
 func (n *namespace) GetNamespaceDetail(ctx *gin.Context) {
 	params := new(struct {
-		namespaceName string `form:"namespace_name"`
+		NamespaceName string `form:"namespace_name"`
 	})
 	if err := ctx.Bind(params); err != nil {
 		logger.Error("Bind请求参数失败，" + err.Error())
@@ -58,7 +58,8 @@ func (n *namespace) GetNamespaceDetail(ctx *gin.Context) {
 		})
 		return
 	}
-	data, err := service.Namespace.GetNamespaceDetail(params.namespaceName)
+
+	data, err := service.Namespace.GetNamespaceDetail(params.NamespaceName)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"msg":  err.Error(),

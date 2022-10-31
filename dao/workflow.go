@@ -23,14 +23,14 @@ type WorkflowResp struct {
 }
 
 //获取列表分页查询
-func (w *workflow) GetList(name string, page, limit int) (data *WorkflowResp, err error) {
+func (w *workflow) GetList(namespace string, page, limit int) (data *WorkflowResp, err error) {
 	//定义分页数据的起始位置
 	startSet := (page - 1) * limit
 	//定义数据库查询返回内容
 	var workflowList []*model.Workflow
 	//数据库查询，Limit方法用于限制条数，Offset方法设置起始位置
 	tx := db.GORM.
-		Where("name like ?", "%"+name+"%").
+		Where("namespace = ?", namespace).
 		Limit(limit).
 		Offset(startSet).
 		Order("id desc").

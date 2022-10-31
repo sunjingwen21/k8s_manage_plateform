@@ -10,7 +10,7 @@ import "time"
 type Workflow struct {
 	//gorm:"primaryKey"用于声明主键
 	ID        uint       `json:"id" gorm:"primaryKey"`
-	CreateAt  *time.Time `json:"create_at"`
+	CreatedAt *time.Time `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at"`
 	DeletedAt *time.Time `json:"deleted_at"`
 

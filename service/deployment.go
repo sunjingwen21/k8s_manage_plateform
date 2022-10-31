@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -109,6 +110,8 @@ func (d *deployment) GetDeploymentDetail(deploymentName, namespace string) (depl
 func (d *deployment) ScaleDeployment(deploymentName, namespace string, scaleNum int) (replica int32, err error) {
 	//获取autoscalingv1.Scale类型的对象，能点出当前的副本数
 	scale, err := K8s.ClientSet.AppsV1().Deployments(namespace).GetScale(context.TODO(), deploymentName, metav1.GetOptions{})
+	fmt.Println("deploymentName", deploymentName)
+	fmt.Println("namespace", namespace)
 	if err != nil {
 		logger.Error(errors.New("获取Deployment副本数信息失败，" + err.Error()))
 		return 0, errors.New("获取Deployment副本数信息失败，" + err.Error())
@@ -235,7 +238,7 @@ func (d *deployment) DeleteDeployment(deploymentName, namespace string) (err err
 }
 
 //重启deployment
-func (d *deployment) RestartDeployment(deploymentName, imageName, namespace string) (err error) {
+func (d *deployment) RestartDeployment(deploymentName, namespace, imageName, image string) (err error) {
 	//此功能等同于以下kubectl命令
 	//kubectl deployment ${service} -p \
 	//'{"spec":{"template":{"spec":{"containers":[{"name":"'"${service}"'","env":
@@ -251,8 +254,9 @@ func (d *deployment) RestartDeployment(deploymentName, imageName, namespace stri
 			"template": map[string]interface{}{
 				"spec": map[string]interface{}{
 					"containers": []map[string]interface{}{
-						{"name": imageName,
-							"image": imageName,
+						{
+							"name":  imageName,
+							"image": image,
 							"env": []map[string]string{{
 								"name":  "RESTART_",
 								"value": strconv.FormatInt(time.Now().Unix(), 10),

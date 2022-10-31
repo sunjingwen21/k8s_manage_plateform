@@ -19,9 +19,9 @@ var Workflow workflow
 //获取列表分页查询
 func (w *workflow) GetList(ctx *gin.Context) {
 	params := new(struct {
-		Name  string `form:"name"`
-		Page  int    `form:"page"`
-		Limit int    `form:"limit"`
+		Namespace string `form:"namespace"`
+		Page      int    `form:"page"`
+		Limit     int    `form:"limit"`
 	})
 	if err := ctx.Bind(params); err != nil {
 		logger.Error("Bind请求参数失败，" + err.Error())
@@ -31,7 +31,7 @@ func (w *workflow) GetList(ctx *gin.Context) {
 		})
 		return
 	}
-	data, err := service.Workflow.GetList(params.Name, params.Limit, params.Page)
+	data, err := service.Workflow.GetList(params.Namespace, params.Page, params.Limit)
 	if err != nil {
 		logger.Error("获取Workflow列表失败，" + err.Error())
 		ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -97,7 +97,7 @@ func (w *workflow) Create(ctx *gin.Context) {
 //删除workflow
 func (w *workflow) DelById(ctx *gin.Context) {
 	params := new(struct {
-		ID int `json:"id"`
+		Id int `json:"id"`
 	})
 	if err := ctx.ShouldBindJSON(params); err != nil {
 		logger.Error("Bind请求参数失败，" + err.Error())
@@ -107,7 +107,7 @@ func (w *workflow) DelById(ctx *gin.Context) {
 		})
 		return
 	}
-	if err := service.Workflow.DelById(params.ID); err != nil {
+	if err := service.Workflow.DelById(params.Id); err != nil {
 		logger.Error("删除Workflow失败，" + err.Error())
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"msg":  err.Error(),

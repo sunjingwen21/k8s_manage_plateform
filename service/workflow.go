@@ -14,8 +14,8 @@ type workflow struct{}
 var Workflow workflow
 
 //获取列表分页查询
-func (w *workflow) GetList(name string, page, limit int) (data *dao.WorkflowResp, err error) {
-	data, err = dao.Workflow.GetList(name, page, limit)
+func (w *workflow) GetList(namespace string, page, limit int) (data *dao.WorkflowResp, err error) {
+	data, err = dao.Workflow.GetList(namespace, page, limit)
 	if err != nil {
 		return nil, err
 	}

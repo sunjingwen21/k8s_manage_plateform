@@ -105,9 +105,10 @@ func (d *deployment) CreateDeployment(ctx *gin.Context) {
 
 //设置deployment副本数
 func (d *deployment) ScaleDeployment(ctx *gin.Context) {
+	fmt.Println("ctx", ctx)
 	params := new(struct {
-		DeploymentName string `form:"deployment_name"`
-		Namespace      string `form:"namespace"`
+		DeploymentName string `json:"deployment_name"`
+		Namespace      string `json:"namespace"`
 		ScaleNum       int    `json:"scale_num"`
 	})
 	//PUT请求，绑定参数方法为ctx.ShouldBindJSON
@@ -119,6 +120,7 @@ func (d *deployment) ScaleDeployment(ctx *gin.Context) {
 		})
 		return
 	}
+	fmt.Println("params", params)
 	data, err := service.Deployment.ScaleDeployment(params.DeploymentName, params.Namespace, params.ScaleNum)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -166,8 +168,9 @@ func (d *deployment) DeleteDeployment(ctx *gin.Context) {
 func (d *deployment) RestartDeployment(ctx *gin.Context) {
 	params := new(struct {
 		DeploymentName string `json:"deployment_name"`
-		ImageName      string `json:"image_name"`
 		Namespace      string `json:"namespace"`
+		ImageName      string `json:"image_name"`
+		Image          string `json:"image"`
 	})
 	//PUT请求，绑定参数方法为ctx.ShouldBindJSON
 	if err := ctx.ShouldBindJSON(params); err != nil {
@@ -178,7 +181,7 @@ func (d *deployment) RestartDeployment(ctx *gin.Context) {
 		})
 		return
 	}
-	err := service.Deployment.RestartDeployment(params.DeploymentName, params.ImageName, params.Namespace)
+	err := service.Deployment.RestartDeployment(params.DeploymentName, params.Namespace, params.ImageName, params.Image)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"msg":  err.Error(),
