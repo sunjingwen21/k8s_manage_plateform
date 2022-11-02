@@ -8,7 +8,7 @@ import "time"
  */
 const (
 	//监听端口
-	ListenAddr = "0.0.0.0:9090"
+	ListenAddr = "0.0.0.0:9093"
 	//权限文件地址
 	Kubeconfig = "/root/.kube/config"
 	//数据库配置

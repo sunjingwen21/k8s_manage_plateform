@@ -26,15 +26,15 @@ func main() {
 	r := gin.Default()
 	//跨域配置
 	r.Use(middle.Cors())
-	////jwt token验证
-	//r.Use(middle.JWTAuth())
+	//jwt token验证
+	r.Use(middle.JWTAuth())
 	//初始化路由规则
 	controller.Router.InitApiRouter(r)
 
 	//终端websocket
 	go func() {
 		http.HandleFunc("/ws", service.Terminal.WsHandler)
-		http.ListenAndServe(":9091", nil)
+		http.ListenAndServe(":9094", nil)
 	}()
 
 	//http server gin程序启动

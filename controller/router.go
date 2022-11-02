@@ -92,7 +92,7 @@ func (r *router) InitApiRouter(router *gin.Engine) {
 		//namespace操作
 		GET("/api/k8s/namespaces", Namespace.GetNamespaces).
 		GET("/api/k8s/namespace/detail", Namespace.GetNamespaceDetail).
-		GET("/api/k8s/namespace/del", Namespace.DeleteNamespace).
+		DELETE("/api/k8s/namespace/del", Namespace.DeleteNamespace).
 		//pv操作
 		GET("/api/k8s/pvs", Pv.GetPvs).
 		GET("/api/k8s/pv/detail", Pv.GetPvDetail)
