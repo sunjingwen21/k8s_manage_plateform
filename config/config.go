@@ -2,22 +2,21 @@ package config
 
 import "time"
 
-/**
- * @author 王子龙
- * 时间：2022/9/21 16:11
- */
 const (
 	//监听端口
 	ListenAddr = "0.0.0.0:9093"
 	//权限文件地址
-	Kubeconfig = "/root/.kube/config"
+	//if os = Windows
+	Kubeconfig = "C:\\Users\\13358\\.kube\\config"
+	//else if os = linux
+	//Kubeconfig = "/root/.kube/config"
 	//数据库配置
 	DbType = "mysql"
 	DbUser = "root"
 	DbPwd  = "123456"
-	DbHost = "10.0.12.12"
-	DbPort = 30002
-	DbName = "test_db"
+	DbHost = "127.0.0.1"
+	DbPort = 31157
+	DbName = "platform"
 	//连接池的配置
 	MaxIdleConns = 10               //最大空闲连接
 	MaxOpenConns = 100              //最大连接数

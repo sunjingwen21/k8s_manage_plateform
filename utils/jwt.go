@@ -8,30 +8,27 @@ import (
 	"github.com/wonderivan/logger"
 )
 
-/**
- * @author 王子龙
- * 时间：2022/10/1 15:49
- */
 type jwtToken struct{}
 
 var JWTToken jwtToken
 
-//token中包含的自定义信息以及jwt签名信息
+// token中包含的自定义信息以及jwt签名信息
 type CustomClaims struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 	jwt.StandardClaims
 }
 
-//加解密因子
+// 加解密因子
 const (
 	SECRET = "adoodevops"
 )
 
-//解析token
+// 解析token
 func (*jwtToken) ParseToken(tokenString string) (claim *CustomClaims, err error) {
 	//使用jwt.ParseWithClaims方法解析token，这个token是前端传给我们的，获得一个*Token类型的对象
 	token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+		logger.Error("[]byte(SECRET):%d", []byte(SECRET))
 		return []byte(SECRET), nil
 	})
 	if err != nil {

@@ -11,10 +11,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-/**
- * @author 王子龙
- * 时间：2022/9/21 11:55
- */
 func main() {
 	//初始化k8s clientset
 	service.K8s.Init()

@@ -10,10 +10,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-/**
- * @author 王子龙
- * 时间：2022/10/3 11:36
- */
 type configMap struct{}
 
 var ConfigMap configMap
@@ -40,7 +36,7 @@ func (c *configMap) fromCells(cells []DataCell) []corev1.ConfigMap {
 	return configMaps
 }
 
-//获取configmap列表，支持过滤、排序、分页
+// 获取configmap列表，支持过滤、排序、分页
 func (c *configMap) GetConfigMaps(filterName, namespace string, limit, page int) (configMapsResp *ConfigMapsResp, err error) {
 	//获取configMapList类型的configMap列表
 	configMapList, err := K8s.ClientSet.CoreV1().ConfigMaps(namespace).List(context.TODO(), metav1.ListOptions{})
@@ -70,7 +66,7 @@ func (c *configMap) GetConfigMaps(filterName, namespace string, limit, page int)
 	}, nil
 }
 
-//获取configmap详情
+// 获取configmap详情
 func (c *configMap) GetConfigMapDetail(configMapName, namespace string) (configMap *corev1.ConfigMap, err error) {
 	configMap, err = K8s.ClientSet.CoreV1().ConfigMaps(namespace).Get(context.TODO(), configMapName, metav1.GetOptions{})
 	if err != nil {
@@ -80,7 +76,7 @@ func (c *configMap) GetConfigMapDetail(configMapName, namespace string) (configM
 	return configMap, nil
 }
 
-//删除configmap
+// 删除configmap
 func (c *configMap) DeleteConfigMap(configMapName, namespace string) (err error) {
 	err = K8s.ClientSet.CoreV1().ConfigMaps(namespace).Delete(context.TODO(), configMapName, metav1.DeleteOptions{})
 	if err != nil {
@@ -90,7 +86,7 @@ func (c *configMap) DeleteConfigMap(configMapName, namespace string) (err error)
 	return nil
 }
 
-//更新configMap
+// 更新configMap
 func (c *configMap) UpdateConfigMap(namespace, content string) (err error) {
 	var configMap = &corev1.ConfigMap{}
 	err = json.Unmarshal([]byte(content), configMap)

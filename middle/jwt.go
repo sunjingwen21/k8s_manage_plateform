@@ -7,14 +7,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-/**
- * @author 王子龙
- * 时间：2022/10/1 16:26
- */
-//JWTAuth 中间件，检查token
 func JWTAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//对登录接口放行
+
 		if len(c.Request.URL.String()) >= 10 && c.Request.URL.String()[0:10] == "/api/login" {
 			c.Next()
 		} else {
@@ -23,7 +19,7 @@ func JWTAuth() gin.HandlerFunc {
 			if token == "" {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"msg":  "请求未携带token，无权限访问",
-					"data": nil,
+					"data": c.Request.Header,
 				})
 				c.Abort()
 				return

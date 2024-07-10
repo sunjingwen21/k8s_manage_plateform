@@ -5,11 +5,7 @@ import (
 	"net/http"
 )
 
-/**
- * @author 王子龙
- * 时间：2022/10/1 15:25
- */
-//处理跨域请求，支持options访问
+// 处理跨域请求，支持options访问
 func Cors() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//获取请求方法
